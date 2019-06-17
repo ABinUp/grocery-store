@@ -20,29 +20,50 @@ public class ProductImageService {
 	@Autowired
 	private ProductImageDAO productImageDAO;
 	
-	// 查询单张图
+	/**
+	 *  查询单张图
+	 * @param product
+	 * @return
+	 */
 	public List<ProductImage> listSingleProductImages(Product product){
 		return productImageDAO.findByProductAndTypeOrderByIdDesc(product, type_single);
 	}
-	// 查询详情图
+	/**
+	 *  查询详情图
+	 * @param product
+	 * @return
+	 */
 	public List<ProductImage> listDetailProductImages(Product product){
 		return productImageDAO.findByProductAndTypeOrderByIdDesc(product, type_detail);
 	}
-	// 增加图片，图片中封装了类型type
+	/**
+	 *  增加图片，图片中封装了类型type
+	 * @param pi
+	 */
 	public void add(ProductImage pi) {
 		productImageDAO.save(pi);
 	}
-	// 获取图片
+	/**
+	 *  获取图片
+	 * @param id
+	 * @return
+	 */
 	public ProductImage get(int id) {
 		return productImageDAO.findOne(id);
 	}
 	
-	// 删除图片
+	/**
+	 *  删除图片
+	 * @param id
+	 */
 	public void delete(int id) {
 		productImageDAO.delete(id);
 	}
 	
-	// 设置首展图,让商品服务层在获取商品时就调用，再返回给表现层
+	/**
+	 *  设置首展图,让商品服务层在获取商品时就调用，再返回给表现层
+	 * @param product
+	 */
 	public void setFirstImage(Product product) {
 		// 拿到该商品的单张图,这么干，前端页面取首展图时会报错，导致一个商品也不会显示，应该考虑没有图片的情况
 		// 问题出在集合可能为空，空调用get(0)，服务器出错。所以应该判断集合是否为空
