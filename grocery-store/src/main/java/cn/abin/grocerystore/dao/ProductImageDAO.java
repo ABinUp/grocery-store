@@ -8,6 +8,11 @@ import cn.abin.grocerystore.pojo.Product;
 import cn.abin.grocerystore.pojo.ProductImage;
 
 public interface ProductImageDAO extends JpaRepository<ProductImage,Integer>{
-	// 根据图片的类型和商品id查询
+	/**
+	 *  根据图片的类型和商品id查询
+	 * @param product
+	 * @param type
+	 * @return
+	 */
 	List<ProductImage> findByProductAndTypeOrderByIdDesc(Product product,String type);
 }
