@@ -30,7 +30,13 @@ public class CategoryService {
 	}
 	
 	@Cacheable(key="'categories-page-'+#p0+ '-' + #p1")
-	// 使用分页
+	/**
+	 *  使用分页
+	 * @param start
+	 * @param size
+	 * @param navigatePages
+	 * @return
+	 */
 	public Page4Navigator<Category> list(int start,int size,int navigatePages){
 		Sort sort = new Sort(Sort.Direction.DESC,"id");
 		Pageable pageable = new PageRequest(start,size,sort);
@@ -41,32 +47,48 @@ public class CategoryService {
 	
 	@CacheEvict(allEntries=true)
 //  @CacheEvict(key="'category-one-'+ #p0")
-	// 增加
+	/**
+	 *  增加
+	 * @param bean
+	 */
 	public void add(Category bean) {
 		categoryDAO.save(bean);
 	}
 	
 	@CacheEvict(allEntries=true)
 //  @CacheEvict(key="'category-one-'+ #p0")
-	// 删除
+	/**
+	 *  删除
+	 * @param id
+	 */
 	public void delete(int id) {
 		categoryDAO.delete(id);
 	}
 	
 	@Cacheable(key="'categories-one-'+ #p0")
-	// 获取分类信息
+	/**
+	 *  获取分类信息
+	 * @param id
+	 * @return
+	 */
 	public Category get(int id) {
 		return categoryDAO.findOne(id);
 	}
 	
 	@CacheEvict(allEntries=true)
 //  @CachePut(key="'category-one-'+ #p0")
-	// 修改分类
+	/**
+	 *  修改分类
+	 * @param bean
+	 */
 	public void update(Category bean) {
 		categoryDAO.save(bean);
 	}
 	
-	// 清空分类下的products中product的category，防止无限循环
+	/**
+	 *  清空分类下的products中product的category，防止无限循环
+	 * @param category
+	 */
 	public void removeCategoryFromProduct(Category category) {
         List<Product> products =category.getProducts();
         if(null!=products) {
