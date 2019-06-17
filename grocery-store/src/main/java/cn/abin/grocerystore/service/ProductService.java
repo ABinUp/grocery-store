@@ -30,8 +30,14 @@ public class ProductService {
 	@Autowired
 	private ReviewService reviewService;
 	
-	// 查询分类下的商品
-	
+	/**
+	 *  查询分类下的商品
+	 * @param cid
+	 * @param start
+	 * @param size
+	 * @param navigatePages
+	 * @return
+	 */
 	public Page4Navigator<Product> list(int cid,int start,int size,int navigatePages){
 		Category category = categoryService.get(cid);
 		// 分页准备
@@ -42,14 +48,24 @@ public class ProductService {
 		productImageService.setFirstImage(pageFromJPA.getContent());
 		return new Page4Navigator<Product>(pageFromJPA,navigatePages); 
 	}
-	// 根据分类查询商品
+	/**
+	 *  根据分类查询商品
+	 * @param category
+	 * @return
+	 */
 	public List<Product> listByCategory(Category category){
 		
 		List<Product> products = productDAO.findByCategoryOrderById(category);
 		productImageService.setFirstImage(products);
 		return products;
 	}
-	// 模糊查询
+	/**
+	 *  模糊查询
+	 * @param start
+	 * @param size
+	 * @param name
+	 * @return
+	 */
 	public List<Product> search(int start,int size,String name){
 		Sort sort = new Sort(Sort.Direction.DESC,"id");
 		Pageable pageable = new PageRequest(start,size,sort);
@@ -59,13 +75,20 @@ public class ProductService {
 		return ps;
 	}
 	
-	// 增加
+	/**
+	 *  增加
+	 * @param product
+	 */
 	public void add(Product product) {
 		productDAO.save(product);
 		// 初始化属性值放在属性值查询时调用，避免有了商品，但之前没初始化，再获取属性值就出错。
 		
 	}
-	// 获取
+	/**
+	 *  获取
+	 * @param id
+	 * @return
+	 */
 	public Product get(int id) {
 		Product p = productDAO.findOne(id);
 		productImageService.setFirstImage(p);
@@ -80,7 +103,10 @@ public class ProductService {
 	public void delete(int id) {
 		productDAO.delete(id);
 	}
-	// 设置分类下的所有商品集合，未做分页处理，可改进
+	/**
+	 *  设置分类下的所有商品集合，未做分页处理，可改进
+	 * @param categorys
+	 */
 	public void fill(List<Category> categorys) {
         for (Category category : categorys) {
             fill(category);
@@ -108,7 +134,10 @@ public class ProductService {
         }
     }
     
-    // 为产品设置销量和评价数
+    /**
+     *  为产品设置销量和评价数
+     * @param product
+     */
     public void setSaleAndReviewNumber(Product product) {
     	int saleCount = orderItemService.getSaleCount(product);
     	product.setSaleCount(saleCount);
