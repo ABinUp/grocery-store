@@ -21,7 +21,14 @@ public class PropertyService {
 	@Autowired
 	private CategoryService categoryService;
 	
-	// 根据cid 查询对应的属性
+	/**
+	 *  根据cid 查询对应的属性
+	 * @param cid
+	 * @param start
+	 * @param size
+	 * @param navigatePages
+	 * @return
+	 */
 	public Page4Navigator<Property> list(int cid,int start,int size,int navigatePages){
 		
 		Category category = categoryService.get(cid);
@@ -33,17 +40,28 @@ public class PropertyService {
 		
 		return new Page4Navigator<Property>(pageFromJPA,navigatePages);
 	}
-	// 查询分类下所有属性
+	/**
+	 *  查询分类下所有属性
+	 * @param cid
+	 * @return
+	 */
 	public List<Property> list(int cid){
 		Category category = categoryService.get(cid);
 		return propertyDAO.findByCategory(category);
 	}
 	
-	// 增加
+	/**
+	 *  增加
+	 * @param bean
+	 */
 	public void add(Property bean) {
 		propertyDAO.save(bean);
 	}
-	// 获取
+	/**
+	 *  获取
+	 * @param id
+	 * @return
+	 */
 	public Property get(int id) {
 		return propertyDAO.findOne(id);
 	}
