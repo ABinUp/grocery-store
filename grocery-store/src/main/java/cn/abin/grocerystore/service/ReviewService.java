@@ -14,11 +14,19 @@ public class ReviewService {
 	@Autowired
 	private ReviewDAO reviewDAO;
 	
-	// 根据商品查出评价,评价实体中已绑定了user,product
+	/**
+	 *  根据商品查出评价,评价实体中已绑定了user,product
+	 * @param product
+	 * @return
+	 */
 	public List<Review> list(Product product){
 		return reviewDAO.findByProductOrderByIdDesc(product);
 	}
-	// 查出商品评价数
+	/**
+	 *  查出商品评价数
+	 * @param product
+	 * @return
+	 */
 	public int count(Product product) {
 		return reviewDAO.countByProduct(product);
 	}
