@@ -10,8 +10,17 @@ import cn.abin.grocerystore.pojo.Category;
 import cn.abin.grocerystore.pojo.Property;
 
 public interface PropertyDAO extends JpaRepository<Property,Integer> {
-	// 通过cid查出已经分页的属性信息
+	/**
+	 *  通过cid查出已经分页的属性信息
+	 * @param category
+	 * @param pageable
+	 * @return
+	 */
 	Page<Property> findByCategory(Category category,Pageable pageable);
-	// 通过cid查询所有属性
+	/**
+	 *  通过cid查询所有属性
+	 * @param category
+	 * @return
+	 */
 	List<Property> findByCategory(Category category);
 }
