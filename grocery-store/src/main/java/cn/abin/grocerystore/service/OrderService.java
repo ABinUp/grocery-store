@@ -34,7 +34,13 @@ public class OrderService {
 	private ReviewService reviewService;
 	
 	
-	// 查出所有订单，分页
+	/**
+	 *  查出所有订单，分页
+	 * @param start
+	 * @param size
+	 * @param navigatePages
+	 * @return
+	 */
 	public Page4Navigator<Order> list(int start,int size,int navigatePages){
 		Sort sort = new Sort(Sort.Direction.DESC,"id");
 		Pageable pageable = new PageRequest(start,size,sort);
@@ -43,24 +49,42 @@ public class OrderService {
 		return new Page4Navigator<Order>(page,navigatePages);
 	}
 	
-	// 根据id查出订单
+	/**
+	 *  根据id查出订单
+	 * @param id
+	 * @return
+	 */
 	public Order get(int id) {
 		return orderDAO.getOne(id);
 	}
-	// 修改订单
+	/**
+	 *  修改订单
+	 * @param order
+	 */
 	public void update(Order order) {
 		orderDAO.save(order);
 	}
-	// 增加订单
+	/**
+	 *  增加订单
+	 * @param order
+	 */
 	public void add(Order order) {
 		orderDAO.save(order);
 	}
-	// 删除订单
+	/**
+	 *  删除订单
+	 * @param id
+	 */
 	public void delete(int id) {
 		orderDAO.delete(id);
 	}
 	
-	// 临时订单项生成订单时，开启事务配置，只有当所有订单项都完成数据库订单id的绑定后，订单才真正生成 201906151311
+	/**
+	 *  临时订单项生成订单时，开启事务配置，只有当所有订单项都完成数据库订单id的绑定后，订单才真正生成 201906151311
+	 * @param order
+	 * @param ois
+	 * @return
+	 */
 	@Transactional(propagation= Propagation.REQUIRED,rollbackForClassName="Exception")
     public float add(Order order, List<OrderItem> ois) {
         float total = 0;
@@ -80,7 +104,11 @@ public class OrderService {
         return total;
     }
 	
-	// 查出用户的订单集合，状态为未删除
+	/**
+	 *  查出用户的订单集合，状态为未删除
+	 * @param user
+	 * @return
+	 */
 	public List<Order> listByUserWithoutDelete(User user) {
         List<Order> orders = listByUserAndNotDeleted(user);
         // 填充订单项，保证非数据库字段完整
@@ -93,7 +121,11 @@ public class OrderService {
     }
     
     // 在评论中学到了，要操作多张表时，需要开启事务，保证操作的完整性，一致性
-    // 更新订单状态为完成，增加评价
+    /**
+     *  更新订单状态为完成，增加评价
+     * @param o
+     * @param review
+     */
     @Transactional(propagation= Propagation.REQUIRED,rollbackForClassName="Exception")
 	public void updateOrderAndAddReview(Order o, Review review) {
     	reviewService.add(review);
