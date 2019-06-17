@@ -20,43 +20,72 @@ public class OrderItemService {
 	@Autowired
 	private ProductImageService productImageService;
 	
-	// 查出某订单的所有订单项
+	/**
+	 *  查出某订单的所有订单项
+	 * @param order
+	 * @return
+	 */
 	public List<OrderItem> list(Order order){
 		List<OrderItem> ois = orderItemDAO.findByOrderOrderByIdDesc(order);
 		
 		return ois;
 	}
-	// 根据商品查出订单项
+	/**
+	 *  根据商品查出订单项
+	 * @param product
+	 * @return
+	 */
 	public List<OrderItem> list(Product product){
 		return orderItemDAO.findByProduct(product);
 	}
 	
-	// 根据用户查出未生成订单的订单项
+	/**
+	 *  根据用户查出未生成订单的订单项
+	 * @param user
+	 * @return
+	 */
 	public List<OrderItem> list(User user){
 		return orderItemDAO.findByUserAndOrderIsNull(user);
 	}
 	
-	// 增加订单项，没有生成订单
+	/**
+	 *  增加订单项，没有生成订单
+	 * @param orderItem
+	 */
 	public void add(OrderItem orderItem) {
 		orderItemDAO.save(orderItem);
 	}
 	
-	// 更新订单项
+	/**
+	 *  更新订单项
+	 * @param oi
+	 */
 	public void update(OrderItem oi) {
 		orderItemDAO.save(oi);
 	}
-	// 删除订单项
+	/**
+	 *  删除订单项
+	 * @param oiid
+	 */
 	public void delete(int oiid) {
 		orderItemDAO.delete(oiid);
 		
 	}
 	
-	// 根据订单项id查出订单项
+	/**
+	 *  根据订单项id查出订单项
+	 * @param id
+	 * @return
+	 */
 	public OrderItem get(int id) {
 		return orderItemDAO.getOne(id);
 	}
 	
-	// 得到销量
+	/**
+	 *  得到销量
+	 * @param product
+	 * @return
+	 */
 	public int getSaleCount(Product product) {
 		List<OrderItem> ois = list(product);
 		int saleCount=0;
@@ -69,7 +98,10 @@ public class OrderItemService {
 		return saleCount;
 	}
 	
-	// 订单的订单项填充，同时计算出订单的其它值，// 注意商品首展图
+	/**
+	 *  订单的订单项填充，同时计算出订单的其它值，// 注意商品首展图
+	 * @param order
+	 */
 	public void fill(Order order) {
 		// 查出该订单对应的所有订单项集合
 		List<OrderItem> ois = list(order);
@@ -101,7 +133,10 @@ public class OrderItemService {
 		
 	}
 	
-	// 清空orderItems的orderItem的order
+	/**
+	 *  清空orderItems的orderItem的order
+	 * @param o
+	 */
 	public void removeOrder(Order o) {
 		List<OrderItem> orderItems = o.getOrderItems();
 		for(OrderItem oi:orderItems) {
