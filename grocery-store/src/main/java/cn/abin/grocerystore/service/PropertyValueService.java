@@ -17,7 +17,11 @@ public class PropertyValueService {
 	private PropertyValueDAO propertyValueDAO;
 	@Autowired
 	private PropertyService propertyService;
-	// 得到某商品的所有属性值集合，
+	/**
+	 *  得到某商品的所有属性值集合，
+	 * @param p
+	 * @return
+	 */
 	public List<PropertyValue> list(Product p){
 		// 查询时才检查初始化
 		init(p);
@@ -28,7 +32,12 @@ public class PropertyValueService {
 	}
 
 
-	// 根据商品和商品的属性得到唯一的商品的属性值
+	/**
+	 *  根据商品和商品的属性得到唯一的商品的属性值
+	 * @param product
+	 * @param property
+	 * @return
+	 */
 	public PropertyValue get(Product product,Property property){
 		PropertyValue pv = propertyValueDAO.findByProductAndPropertyOrderByIdDesc(product, property);
 		// 设置属性，便于调用，获取属性名
@@ -59,16 +68,24 @@ public class PropertyValueService {
 		}
 	}
 	
-	// 增加属性值字段
+	/**
+	 *  增加属性值字段
+	 * @param pv
+	 */
 	public void add(PropertyValue pv) {
 		propertyValueDAO.save(pv);
 	}
-	// 更改属性值
+	/**
+	 *  更改属性值
+	 * @param pv
+	 */
 	public void update(PropertyValue pv) {
 		propertyValueDAO.save(pv);
 	}
 	
-	// 设置属性，可以不用，在实体中声明了对应字段的映射，自动装配
+	/**
+	 *  设置属性，可以不用，在实体中声明了对应字段的映射，自动装配
+	 */
 //	private void setProperty(PropertyValue pv) {
 //		Property property = propertyService.get(pv.getProperty().getId());
 //		pv.setProperty(property);
