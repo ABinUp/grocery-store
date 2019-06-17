@@ -11,8 +11,16 @@ import cn.abin.grocerystore.pojo.User;
 
 public interface OrderItemDAO extends JpaRepository<OrderItem,Integer>{
 	List<OrderItem> findByOrderOrderByIdDesc(Order order);
-	// 根据商品查出订单项
+	/**
+	 *  根据商品查出订单项
+	 * @param product
+	 * @return
+	 */
 	List<OrderItem> findByProduct(Product product);
-	// 查询某用户未生成订单的订单项
+	/**
+	 *  查询某用户未生成订单的订单项
+	 * @param user
+	 * @return
+	 */
 	List<OrderItem> findByUserAndOrderIsNull(User user);
 }

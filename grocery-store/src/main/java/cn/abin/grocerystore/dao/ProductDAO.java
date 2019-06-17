@@ -10,11 +10,21 @@ import cn.abin.grocerystore.pojo.Category;
 import cn.abin.grocerystore.pojo.Product;
 
 public interface ProductDAO extends JpaRepository<Product,Integer>{
-	// 根据分类查询产品的分页信息
+	/**
+	 *  根据分类查询产品的分页信息
+	 * @param category
+	 * @param pageable
+	 * @return
+	 */
 	Page<Product> findByCategory(Category category,Pageable pageable);
 	
 	List<Product> findByCategoryOrderById(Category category);
 	
-	// 模糊查询出指定分页的商品
+	/**
+	 *  模糊查询出指定分页的商品
+	 * @param name
+	 * @param pageable
+	 * @return
+	 */
 	List<Product> findByNameLike(String name,Pageable pageable);
 }
