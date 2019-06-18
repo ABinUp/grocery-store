@@ -74,7 +74,11 @@ public class ForePageController {
         return "fore/search";
     }
     
-    // 退出登录，放在这里因为ForeRESTController数据自动处理为JSON了，重定向会失效
+    /**
+     *  退出登录，放在这里因为ForeRESTController数据自动处理为JSON了，重定向会失效
+     * @param session
+     * @return
+     */
     @GetMapping("/forelogout")
     public String logout(HttpSession session) {
 //    	session.removeAttribute("user");
