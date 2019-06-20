@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import cn.abin.grocerystore.realm.JPARealm;
 
-@Configuration
+@Configuration		
 public class ShiroConfiguration {
     @Bean
     public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
