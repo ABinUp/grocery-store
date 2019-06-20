@@ -3,6 +3,9 @@ package cn.abin.grocerystore.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import cn.abin.grocerystore.dao.OrderItemDAO;
@@ -10,8 +13,10 @@ import cn.abin.grocerystore.pojo.Order;
 import cn.abin.grocerystore.pojo.OrderItem;
 import cn.abin.grocerystore.pojo.Product;
 import cn.abin.grocerystore.pojo.User;
+import cn.abin.grocerystore.util.SpringContextUtil;
 
 @Service
+@CacheConfig(cacheNames="orderItems")
 public class OrderItemService {
 	
 	
@@ -25,6 +30,7 @@ public class OrderItemService {
 	 * @param order
 	 * @return
 	 */
+	@Cacheable(key="'OrderItem-oid-'+#p0.id")
 	public List<OrderItem> list(Order order){
 		List<OrderItem> ois = orderItemDAO.findByOrderOrderByIdDesc(order);
 		
@@ -35,6 +41,7 @@ public class OrderItemService {
 	 * @param product
 	 * @return
 	 */
+	@Cacheable(key="'OrderItem-pid-'+#p0.id")
 	public List<OrderItem> list(Product product){
 		return orderItemDAO.findByProduct(product);
 	}
@@ -44,6 +51,7 @@ public class OrderItemService {
 	 * @param user
 	 * @return
 	 */
+	@Cacheable(key="'OrderItem-uid-oidnull'+#p0.id")
 	public List<OrderItem> list(User user){
 		return orderItemDAO.findByUserAndOrderIsNull(user);
 	}
@@ -52,6 +60,7 @@ public class OrderItemService {
 	 *  增加订单项，没有生成订单
 	 * @param orderItem
 	 */
+	@CacheEvict(allEntries=true)
 	public void add(OrderItem orderItem) {
 		orderItemDAO.save(orderItem);
 	}
@@ -60,6 +69,7 @@ public class OrderItemService {
 	 *  更新订单项
 	 * @param oi
 	 */
+	@CacheEvict(allEntries=true)
 	public void update(OrderItem oi) {
 		orderItemDAO.save(oi);
 	}
@@ -67,6 +77,7 @@ public class OrderItemService {
 	 *  删除订单项
 	 * @param oiid
 	 */
+	@CacheEvict(allEntries=true)
 	public void delete(int oiid) {
 		orderItemDAO.delete(oiid);
 		
@@ -77,6 +88,7 @@ public class OrderItemService {
 	 * @param id
 	 * @return
 	 */
+	@Cacheable(key="'OrderItem-one'+#p0")
 	public OrderItem get(int id) {
 		return orderItemDAO.getOne(id);
 	}
@@ -87,7 +99,8 @@ public class OrderItemService {
 	 * @return
 	 */
 	public int getSaleCount(Product product) {
-		List<OrderItem> ois = list(product);
+		OrderItemService bean = SpringContextUtil.getBean(OrderItemService.class);
+		List<OrderItem> ois = bean.list(product);
 		int saleCount=0;
 		for(OrderItem oi:ois) {
 			// 为空判断，排除掉未生成订单的临时订单项，以及为付款的订单项
@@ -103,8 +116,9 @@ public class OrderItemService {
 	 * @param order
 	 */
 	public void fill(Order order) {
+		OrderItemService bean = SpringContextUtil.getBean(OrderItemService.class);
 		// 查出该订单对应的所有订单项集合
-		List<OrderItem> ois = list(order);
+		List<OrderItem> ois = bean.list(order);
 		// 遍历集合，计算总价和总数
 		float total = 0;
 		int totalNumber = 0;

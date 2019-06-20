@@ -136,7 +136,7 @@ public class ProductService {
     public void fill(Category category) {
     	ProductService productService = SpringContextUtil.getBean(ProductService.class);
     	// 通过服务层获取商品时，已设置好首展图
-        List<Product> products = listByCategory(category);
+        List<Product> products = productService.listByCategory(category);
         
         category.setProducts(products);
     }

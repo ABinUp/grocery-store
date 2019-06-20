@@ -3,6 +3,9 @@ package cn.abin.grocerystore.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +20,10 @@ import cn.abin.grocerystore.pojo.OrderItem;
 import cn.abin.grocerystore.pojo.Review;
 import cn.abin.grocerystore.pojo.User;
 import cn.abin.grocerystore.util.Page4Navigator;
+import cn.abin.grocerystore.util.SpringContextUtil;
 
 @Service
+@CacheConfig(cacheNames="orders")
 public class OrderService {
 	public static final String waitPay = "waitPay";
     public static final String waitDelivery = "waitDelivery";
@@ -41,6 +46,7 @@ public class OrderService {
 	 * @param navigatePages
 	 * @return
 	 */
+	@Cacheable(key="'Orders-page-'+#p0+ '-' + #p1")
 	public Page4Navigator<Order> list(int start,int size,int navigatePages){
 		Sort sort = new Sort(Sort.Direction.DESC,"id");
 		Pageable pageable = new PageRequest(start,size,sort);
@@ -54,6 +60,7 @@ public class OrderService {
 	 * @param id
 	 * @return
 	 */
+	@Cacheable(key="'Orders-one-'+#p0")
 	public Order get(int id) {
 		return orderDAO.getOne(id);
 	}
@@ -61,6 +68,7 @@ public class OrderService {
 	 *  修改订单
 	 * @param order
 	 */
+	@CacheEvict(allEntries = true)
 	public void update(Order order) {
 		orderDAO.save(order);
 	}
@@ -68,6 +76,7 @@ public class OrderService {
 	 *  增加订单
 	 * @param order
 	 */
+	@CacheEvict(allEntries = true)
 	public void add(Order order) {
 		orderDAO.save(order);
 	}
@@ -75,6 +84,7 @@ public class OrderService {
 	 *  删除订单
 	 * @param id
 	 */
+	@CacheEvict(allEntries = true)
 	public void delete(int id) {
 		orderDAO.delete(id);
 	}
@@ -88,7 +98,8 @@ public class OrderService {
 	@Transactional(propagation= Propagation.REQUIRED,rollbackForClassName="Exception")
     public float add(Order order, List<OrderItem> ois) {
         float total = 0;
-        add(order);
+        OrderService bean = SpringContextUtil.getBean(OrderService.class);
+        bean.add(order);
  
 //        if(false)
 //            throw new RuntimeException();
@@ -110,7 +121,8 @@ public class OrderService {
 	 * @return
 	 */
 	public List<Order> listByUserWithoutDelete(User user) {
-        List<Order> orders = listByUserAndNotDeleted(user);
+		OrderService bean = SpringContextUtil.getBean(OrderService.class);
+        List<Order> orders = bean.listByUserAndNotDeleted(user);
         // 填充订单项，保证非数据库字段完整
         orderItemService.fill(orders);
         return orders;
@@ -129,7 +141,7 @@ public class OrderService {
     @Transactional(propagation= Propagation.REQUIRED,rollbackForClassName="Exception")
 	public void updateOrderAndAddReview(Order o, Review review) {
     	reviewService.add(review);
-    	
-    	update(o);
+    	OrderService bean = SpringContextUtil.getBean(OrderService.class);
+    	bean.update(o);
 	}
 }

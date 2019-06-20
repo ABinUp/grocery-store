@@ -32,7 +32,7 @@ public class CategoryService {
 		return categoryDAO.findAll(sort);
 	}
 	
-	@Cacheable(key="'categories-page-'+#p0+ '-' + #p1")
+	
 	/**
 	 *  使用分页
 	 * @param start
@@ -40,6 +40,7 @@ public class CategoryService {
 	 * @param navigatePages
 	 * @return
 	 */
+	@Cacheable(key="'categories-page-'+#p0+ '-' + #p1")
 	public Page4Navigator<Category> list(int start,int size,int navigatePages){
 		Sort sort = new Sort(Sort.Direction.DESC,"id");
 		Pageable pageable = new PageRequest(start,size,sort);
