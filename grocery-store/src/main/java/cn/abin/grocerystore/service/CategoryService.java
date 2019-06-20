@@ -22,7 +22,10 @@ import cn.abin.grocerystore.util.Page4Navigator;
 public class CategoryService {
 	@Autowired
 	private CategoryDAO categoryDAO;
-	
+	/**
+	 * 查找所有分类
+	 * @return	分类集合
+	 */
 	@Cacheable(key="'categories-all'")
 	public List<Category> list(){
 		Sort sort = new Sort(Sort.Direction.DESC,"id");

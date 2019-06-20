@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +17,10 @@ import cn.abin.grocerystore.dao.ProductDAO;
 import cn.abin.grocerystore.pojo.Category;
 import cn.abin.grocerystore.pojo.Product;
 import cn.abin.grocerystore.util.Page4Navigator;
+import cn.abin.grocerystore.util.SpringContextUtil;
 
 @Service
+@CacheConfig(cacheNames="products")
 public class ProductService {
 	@Autowired
 	private ProductDAO productDAO;
@@ -38,6 +43,7 @@ public class ProductService {
 	 * @param navigatePages
 	 * @return
 	 */
+	@Cacheable(key="'products-cid-'+#p0+'-page-'+#p1 + '-' + #p2 ")
 	public Page4Navigator<Product> list(int cid,int start,int size,int navigatePages){
 		Category category = categoryService.get(cid);
 		// 分页准备
@@ -53,6 +59,7 @@ public class ProductService {
 	 * @param category
 	 * @return
 	 */
+	@Cacheable(key="'products-cid-'+ #p0.id")
 	public List<Product> listByCategory(Category category){
 		
 		List<Product> products = productDAO.findByCategoryOrderById(category);
@@ -79,6 +86,7 @@ public class ProductService {
 	 *  增加
 	 * @param product
 	 */
+	@CacheEvict(allEntries=true)
 	public void add(Product product) {
 		productDAO.save(product);
 		// 初始化属性值放在属性值查询时调用，避免有了商品，但之前没初始化，再获取属性值就出错。
@@ -89,17 +97,26 @@ public class ProductService {
 	 * @param id
 	 * @return
 	 */
+	@Cacheable(key="'products-one-'+ #p0")
 	public Product get(int id) {
 		Product p = productDAO.findOne(id);
 		productImageService.setFirstImage(p);
 		return p;
 	}
-
+	/**
+	 *  更新
+	 * @param bean
+	 */
+	@CacheEvict(allEntries=true)
 	public void update(Product bean) {
 		productDAO.save(bean);
 		
 	}
-
+	/**
+	 *  删除
+	 * @param id
+	 */
+	@CacheEvict(allEntries=true)
 	public void delete(int id) {
 		productDAO.delete(id);
 	}
@@ -112,7 +129,12 @@ public class ProductService {
             fill(category);
         }
     }
+	/**
+	 *  通过绕一绕，诱发AOP，获取本服务类，在调用方法，才会走缓存
+	 * @param category
+	 */
     public void fill(Category category) {
+    	ProductService productService = SpringContextUtil.getBean(ProductService.class);
     	// 通过服务层获取商品时，已设置好首展图
         List<Product> products = listByCategory(category);
         
